@@ -56,7 +56,7 @@ public class User {
     private Boolean sex;
 
     /**
-     * 所属班级id，非班主任老师的为null
+     * 所属班级id
      */
     @TableField(value = "class_id")
     private Integer classId;

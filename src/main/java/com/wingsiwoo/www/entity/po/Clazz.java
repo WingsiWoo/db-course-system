@@ -37,4 +37,16 @@ public class Clazz {
     @TableField(value = "year_id")
     private Integer yearId;
 
+    /**
+     * 班主任id
+     */
+    @TableField(value = "teacher_id")
+    private Integer teacherId;
+
+    /**
+     * 班级序号
+     */
+    @TableField(value = "index")
+    private Integer index;
+
 }

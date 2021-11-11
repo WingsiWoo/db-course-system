@@ -88,7 +88,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         excelBoList = excelBoList.stream().filter(bo -> StringUtils.isNotEmpty(bo.getAccount())).collect(Collectors.toList());
         // 检查工号/学号是否唯一
         List<String> accounts = excelBoList.stream().map(UserExcelBo::getAccount).collect(Collectors.toList());
-        Assert.isTrue(CollectionUtils.isEmpty(accounts), "学号/工号已存在[" + StringUtils.join(accounts.toArray(), ",") + "]");
+        Assert.isTrue(CollectionUtils.isEmpty(userMapper.selectBatchByAccounts(accounts)),
+                "学号/工号已存在[" + StringUtils.join(accounts.toArray(), ",") + "]");
         // 检查必填信息是否都填写
         List<UserExcelBo> names = excelBoList.stream().filter(bo -> StringUtils.isEmpty(bo.getName())).collect(Collectors.toList());
         Assert.isTrue(CollectionUtils.isEmpty(names), "以下账户的姓名未填写：" +

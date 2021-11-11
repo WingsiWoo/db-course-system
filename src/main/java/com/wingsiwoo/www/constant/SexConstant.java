@@ -22,14 +22,7 @@ public class SexConstant {
         }
     }
 
-    public static String transform(Integer sex) {
-        switch (sex) {
-            case 0:
-                return SEX_CH_MAN;
-            case 1:
-                return SEX_CH_WOMAN;
-            default:
-                throw new IllegalArgumentException("参数不合法");
-        }
+    public static String transform(Boolean sex) {
+        return sex ? SEX_CH_WOMAN : SEX_CH_MAN;
     }
 }

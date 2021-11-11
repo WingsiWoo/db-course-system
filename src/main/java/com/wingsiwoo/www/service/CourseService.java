@@ -2,6 +2,7 @@ package com.wingsiwoo.www.service;
 
 import com.wingsiwoo.www.entity.po.Course;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.http.ResponseEntity;
 
 /**
  * <p>
@@ -13,4 +14,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CourseService extends IService<Course> {
 
+    /**
+     * 导出课程成绩信息
+     * @param courseId 课程id
+     * @return 课程成绩excel
+     */
+    ResponseEntity<byte[]> exportGradeExcel(Integer courseId);
+
+    /**
+     * 导出选修本门课程学生信息
+     * @param courseId 课程id
+     * @return 选修本门课程学生信息excel
+     */
+    ResponseEntity<byte[]> exportStudentCourseInfo(Integer courseId);
 }
