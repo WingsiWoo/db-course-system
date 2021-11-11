@@ -57,4 +57,16 @@ public class Course {
     @TableField(value = "credit")
     private Float credit;
 
+    /**
+     * 上课时间
+     */
+    @TableField(value = "time")
+    private String time;
+
+    /**
+     * 上课地点
+     */
+    @TableField(value = "address")
+    private String address;
+
 }

@@ -1,5 +1,7 @@
 package com.wingsiwoo.www.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wingsiwoo.www.entity.bo.CoursePageBo;
 import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.entity.po.Course;
@@ -48,4 +50,17 @@ public interface CourseService extends IService<Course> {
      * @return 更新结果
      */
     boolean updateStudentGrade(UpdateGradeBo updateGradeBo);
+
+    /**
+     * 分页查询所有课程
+     * @return Page<CoursePageBo>
+     */
+    Page<CoursePageBo> showCoursesInPage();
+
+    /**
+     * 分页查询用户相关课程
+     * @param userId 用户id
+     * @return Page<CoursePageBo>
+     */
+    Page<CoursePageBo> showSelectedCoursesInPage(Integer userId);
 }

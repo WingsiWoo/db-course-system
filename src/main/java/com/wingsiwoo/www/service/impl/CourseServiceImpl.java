@@ -1,13 +1,13 @@
 package com.wingsiwoo.www.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wingsiwoo.www.constant.RoleConstant;
 import com.wingsiwoo.www.dao.CourseMapper;
 import com.wingsiwoo.www.dao.StudentCourseMapper;
 import com.wingsiwoo.www.dao.UserMapper;
-import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
-import com.wingsiwoo.www.entity.bo.StudentGradeExcelBo;
-import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
-import com.wingsiwoo.www.entity.bo.UserExcelBo;
+import com.wingsiwoo.www.dao.UserRoleMapper;
+import com.wingsiwoo.www.entity.bo.*;
 import com.wingsiwoo.www.entity.po.Course;
 import com.wingsiwoo.www.entity.po.StudentCourse;
 import com.wingsiwoo.www.entity.po.User;
@@ -49,6 +49,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private UserMapper userMapper;
     @Resource
     private StudentCourseService studentCourseService;
+    @Resource
+    private UserRoleMapper userRoleMapper;
+    @Resource
+    private CourseMapper courseMapper;
 
     @Override
     public ResponseEntity<byte[]> exportGradeExcel(Integer courseId) {
@@ -164,5 +168,72 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Assert.notNull(studentCourse, "该学生未选修该门课程");
         studentCourse.setGrade(updateGradeBo.getGrade());
         return studentCourseMapper.updateById(studentCourse) == 1;
+    }
+
+    @Override
+    public Page<CoursePageBo> showCoursesInPage() {
+        List<Course> courses = courseMapper.selectList(null);
+        Page<CoursePageBo> page = new Page<>(1, 10);
+        Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(User::getId, User::getName));
+        List<CoursePageBo> pageBos = courses.stream().map(course -> {
+            CoursePageBo coursePageBo = new CoursePageBo();
+            coursePageBo.setId(course.getId());
+            coursePageBo.setName(course.getName());
+            coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
+            coursePageBo.setCredit(course.getCredit());
+            coursePageBo.setTime(course.getName());
+            coursePageBo.setAddress(course.getAddress());
+            return coursePageBo;
+        }).collect(Collectors.toList());
+        page.setRecords(pageBos);
+        page.setTotal(pageBos.size());
+        return page;
+    }
+
+    @Override
+    public Page<CoursePageBo> showSelectedCoursesInPage(Integer userId) {
+        User user = userMapper.selectById(userId);
+        Assert.notNull(user, "用户不存在");
+        Integer roleId = userRoleMapper.selectByUserId(userId).getRoleId();
+        Page<CoursePageBo> page = new Page<>(1, 10);
+
+        if (RoleConstant.ROLE_STUDENT.equals(roleId)) {
+            List<StudentCourse> studentCourses = studentCourseMapper.selectByStudentId(userId);
+            if (CollectionUtils.isNotEmpty(studentCourses)) {
+                List<Course> courses = courseMapper.selectBatchIds(studentCourses.stream().map(StudentCourse::getCourseId).collect(Collectors.toList()));
+                Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
+                        .stream().collect(Collectors.toMap(User::getId, User::getName));
+                List<CoursePageBo> pageBos = courses.stream().map(course -> {
+                    CoursePageBo coursePageBo = new CoursePageBo();
+                    coursePageBo.setId(course.getId());
+                    coursePageBo.setName(course.getName());
+                    coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
+                    coursePageBo.setCredit(course.getCredit());
+                    coursePageBo.setTime(course.getName());
+                    coursePageBo.setAddress(course.getAddress());
+                    return coursePageBo;
+                }).collect(Collectors.toList());
+                page.setRecords(pageBos);
+                page.setTotal(pageBos.size());
+            }
+        } else if (RoleConstant.ROLE_TEACHER.equals(roleId)) {
+            List<Course> courses = courseMapper.selectByTeacherId(userId);
+            if (CollectionUtils.isNotEmpty(courses)) {
+                List<CoursePageBo> pageBos = courses.stream().map(course -> {
+                    CoursePageBo coursePageBo = new CoursePageBo();
+                    coursePageBo.setId(course.getId());
+                    coursePageBo.setName(course.getName());
+                    coursePageBo.setTeacherName(user.getName());
+                    coursePageBo.setCredit(course.getCredit());
+                    coursePageBo.setTime(course.getName());
+                    coursePageBo.setAddress(course.getAddress());
+                    return coursePageBo;
+                }).collect(Collectors.toList());
+                page.setRecords(pageBos);
+                page.setTotal(pageBos.size());
+            }
+        }
+        return page;
     }
 }

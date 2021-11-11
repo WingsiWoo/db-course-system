@@ -1,7 +1,9 @@
 package com.wingsiwoo.www.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wingsiwoo.www.auth.result.CommonResult;
+import com.wingsiwoo.www.entity.bo.CoursePageBo;
 import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.service.CourseService;
@@ -71,6 +73,24 @@ public class CourseController {
     }
 
     /**
+     * 分页展示所有课程信息
+     * @return
+     */
+    @GetMapping("/showCoursesInPage")
+    public CommonResult<Page<CoursePageBo>> showCoursesInPage() {
+        return CommonResult.operateSuccess(courseService.showCoursesInPage());
+    }
+
+    /**
+     * 分页展示用户选择/任教的所有课程
+     * @return
+     */
+    @PostMapping("/showSelectedCoursesInPage")
+    public CommonResult<Page<CoursePageBo>> showSelectedCoursesInPage(@NotNull(message = "用户id不可为空") @RequestParam("userId") Integer userId) {
+        return CommonResult.operateSuccess(courseService.showSelectedCoursesInPage(userId));
+    }
+
+    /**
      * 学生选课
      * @return
      */
@@ -85,24 +105,6 @@ public class CourseController {
      */
     @PostMapping("/createCourse")
     public CommonResult<Void> createCourse() {
-
-    }
-
-    /**
-     * 分页展示所有课程信息
-     * @return
-     */
-    @GetMapping("/showCoursesInPage")
-    public CommonResult<Void> showCoursesInPage() {
-
-    }
-
-    /**
-     * 分页展示学生选择的所有课程
-     * @return
-     */
-    @PostMapping("/showSelectedCoursesInPage")
-    public CommonResult<Void> showSelectedCoursesInPage() {
 
     }
 }
