@@ -1,10 +1,10 @@
-package com.wingsiwoo.www.result;
+package com.wingsiwoo.www.auth.result;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import static com.wingsiwoo.www.result.ResultConstant.*;
+import static com.wingsiwoo.www.auth.result.ResultConstant.*;
 
 /**
  * 公共返回信息

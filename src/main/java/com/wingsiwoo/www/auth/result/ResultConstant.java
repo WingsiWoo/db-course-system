@@ -1,4 +1,4 @@
-package com.wingsiwoo.www.result;
+package com.wingsiwoo.www.auth.result;
 
 /**
  * @author WingsiWoo

@@ -1,7 +1,7 @@
-package com.wingsiwoo.www.aop;
+package com.wingsiwoo.www.auth.aop;
 
 
-import com.wingsiwoo.www.result.CommonResult;
+import com.wingsiwoo.www.auth.result.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;

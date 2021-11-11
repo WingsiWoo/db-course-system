@@ -25,15 +25,27 @@ public class User {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 学生学号/教师工号，用于登录
+     */
     @TableField(value = "account")
     private String account;
 
+    /**
+     * 密码
+     */
     @TableField(value = "password")
     private String password;
 
+    /**
+     * 姓名
+     */
     @TableField(value = "name")
     private String name;
 
+    /**
+     * 联系电话
+     */
     @TableField(value = "phone")
     private String phone;
 
