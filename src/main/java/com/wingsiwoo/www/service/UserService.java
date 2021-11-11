@@ -1,7 +1,7 @@
 package com.wingsiwoo.www.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wingsiwoo.www.entity.bo.ImportExcelBo;
+import com.wingsiwoo.www.entity.bo.ImportUserExcelBo;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
 import com.wingsiwoo.www.entity.po.User;
@@ -29,7 +29,7 @@ public interface UserService extends IService<User> {
      * @param excelBo 文件+角色id
      * @return 导入结果
      */
-    boolean importUserInfo(ImportExcelBo excelBo);
+    boolean importUserInfo(ImportUserExcelBo excelBo);
 
     /**
      * 导出用户模板

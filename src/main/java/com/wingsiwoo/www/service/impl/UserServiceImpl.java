@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.dao.RoleMapper;
 import com.wingsiwoo.www.dao.UserMapper;
 import com.wingsiwoo.www.dao.UserRoleMapper;
-import com.wingsiwoo.www.entity.bo.ImportExcelBo;
+import com.wingsiwoo.www.entity.bo.ImportUserExcelBo;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
 import com.wingsiwoo.www.entity.bo.UserExcelBo;
@@ -65,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean importUserInfo(ImportExcelBo excelBo) {
+    public boolean importUserInfo(ImportUserExcelBo excelBo) {
         InputStream inputStream = null;
         List<UserExcelBo> excelBoList;
         try {

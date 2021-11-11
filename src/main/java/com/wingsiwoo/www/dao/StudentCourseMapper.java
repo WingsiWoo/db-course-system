@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -38,5 +39,19 @@ public interface StudentCourseMapper extends BaseMapper<StudentCourse> {
                .select(StudentCourse::getCourseId, StudentCourse::getGrade)
                .eq(StudentCourse::getStudentId, studentId);
         return selectList(wrapper);
+    }
+
+    /**
+     * 检查学生是否选修课程
+     * @param courseId 课程id
+     * @param studentId 学生id
+     * @return 是否选修
+     */
+    default StudentCourse selectRelation(Integer courseId, Integer studentId) {
+        QueryWrapper<StudentCourse> wrapper = new QueryWrapper<>();
+        wrapper.lambda()
+               .eq(StudentCourse::getCourseId, courseId)
+               .eq(StudentCourse::getStudentId, studentId);
+        return selectOne(wrapper);
     }
 }

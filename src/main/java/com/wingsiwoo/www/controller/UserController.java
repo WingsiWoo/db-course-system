@@ -2,7 +2,7 @@ package com.wingsiwoo.www.controller;
 
 
 import com.wingsiwoo.www.auth.result.CommonResult;
-import com.wingsiwoo.www.entity.bo.ImportExcelBo;
+import com.wingsiwoo.www.entity.bo.ImportUserExcelBo;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
 import com.wingsiwoo.www.service.UserService;
@@ -11,10 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -42,7 +40,7 @@ public class UserController {
      * 导入用户信息（同一个excel中只可导入相同角色的）
      */
     @PostMapping("/importUserInfo")
-    public CommonResult<Void> importUserInfo(@Validated @RequestBody ImportExcelBo excelBo) {
+    public CommonResult<Void> importUserInfo(@Validated @RequestBody ImportUserExcelBo excelBo) {
         return CommonResult.autoResult(userService.importUserInfo(excelBo));
     }
 

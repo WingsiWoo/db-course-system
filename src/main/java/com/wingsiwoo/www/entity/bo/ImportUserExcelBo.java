@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @date 2021/11/11
  */
 @Data
-public class ImportExcelBo {
+public class ImportUserExcelBo {
     @NotNull(message = "文件不可为空")
     private MultipartFile file;
 

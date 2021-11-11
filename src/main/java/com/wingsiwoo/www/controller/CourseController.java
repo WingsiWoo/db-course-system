@@ -1,13 +1,15 @@
 package com.wingsiwoo.www.controller;
 
 
+import com.wingsiwoo.www.auth.result.CommonResult;
+import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
+import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.service.CourseService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -26,14 +28,82 @@ public class CourseController {
     @Resource
     private CourseService courseService;
 
+    /**
+     * 导出课程学生成绩信息
+     * @param courseId 课程id
+     * @return 学生成绩excel
+     */
     @GetMapping("/exportGradeExcel")
     public ResponseEntity<byte[]> exportGradeExcel(@NotNull @RequestParam("courseId") Integer courseId) {
         return courseService.exportGradeExcel(courseId);
     }
 
+    /**
+     * 导出选课学生名单
+     * @param courseId 课程id
+     * @return 学生信息
+     */
     @GetMapping("/exportStudentCourseInfo")
     public ResponseEntity<byte[]> exportStudentCourseInfo(@NotNull @RequestParam("courseId") Integer courseId) {
         return courseService.exportStudentCourseInfo(courseId);
+    }
+
+    /**
+     * 导入课程学生成绩信息
+     * @return 导入结果
+     */
+    @PostMapping("/teacherImportGrade")
+    public CommonResult<Void> teacherImportGrade(@Validated @RequestBody ImportGradeExcelBo excelBo) {
+        return CommonResult.autoResult(courseService.teacherImportGrade(excelBo));
+    }
+
+    /**
+     * 导出学生成绩excel模板
+     */
+    @GetMapping("/exportGradeTemplate")
+    public ResponseEntity<byte[]> exportGradeTemplate() {
+        return courseService.exportGradeTemplate();
+    }
+
+    @PostMapping("/updateStudentGrade")
+    public CommonResult<Void> updateStudentGrade(@Validated @RequestBody UpdateGradeBo updateGradeBo) {
+        return CommonResult.autoResult(courseService.updateStudentGrade(updateGradeBo));
+    }
+
+    /**
+     * 学生选课
+     * @return
+     */
+    @PostMapping("/selectCourse")
+    public CommonResult<Void> selectCourse() {
+
+    }
+
+    /**
+     * 教师开课
+     * @return
+     */
+    @PostMapping("/createCourse")
+    public CommonResult<Void> createCourse() {
+
+    }
+
+    /**
+     * 分页展示所有课程信息
+     * @return
+     */
+    @GetMapping("/showCoursesInPage")
+    public CommonResult<Void> showCoursesInPage() {
+
+    }
+
+    /**
+     * 分页展示学生选择的所有课程
+     * @return
+     */
+    @PostMapping("/showSelectedCoursesInPage")
+    public CommonResult<Void> showSelectedCoursesInPage() {
+
     }
 }
 
