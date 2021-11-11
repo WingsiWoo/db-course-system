@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
  * @since 2021-11-11
  */
 @Controller
-@RequestMapping("/clazz")
+@RequestMapping("/api/clazz")
 public class ClazzController {
 
 }

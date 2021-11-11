@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
  * @since 2021-11-11
  */
 @Controller
-@RequestMapping("/year")
+@RequestMapping("/api/year")
 public class YearController {
 
 }

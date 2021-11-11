@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
  * @since 2021-11-11
  */
 @Controller
-@RequestMapping("/college")
+@RequestMapping("/api/college")
 public class CollegeController {
 
 }
