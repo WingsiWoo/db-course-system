@@ -1,11 +1,12 @@
 package com.wingsiwoo.www.service;
 
-import com.wingsiwoo.www.entity.po.College;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wingsiwoo.www.entity.po.College;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author WingsiWoo
@@ -13,4 +14,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CollegeService extends IService<College> {
 
+    /**
+     * 分页查询所有学院信息
+     *
+     * @return 学院信息
+     */
+    Page<College> getAllCollegeInfo();
 }
