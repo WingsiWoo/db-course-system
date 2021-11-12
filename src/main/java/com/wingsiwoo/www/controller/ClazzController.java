@@ -1,27 +1,22 @@
 package com.wingsiwoo.www.controller;
 
 
-import com.wingsiwoo.www.entity.bo.UserExcelBo;
+import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.service.ClazzService;
-import com.wingsiwoo.www.util.ExcelUtil;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.io.ByteArrayOutputStream;
-import java.util.LinkedList;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author WingsiWoo
@@ -39,6 +34,23 @@ public class ClazzController {
     @GetMapping("/exportClazzInfo")
     public ResponseEntity<byte[]> exportClazzInfo(@NotNull @RequestParam("clazzId") Integer clazzId) {
         return clazzService.exportClazzInfo(clazzId);
+    }
+
+    /**
+     * 导入班级学生信息
+     */
+    @PostMapping("/importClazzStudents")
+    public CommonResult<Void> importClazzStudents(@NotNull(message = "文件不可为空") @RequestParam("file") MultipartFile file,
+                                                  @NotNull(message = "课程id不可为空") @RequestParam("clazzId") Integer clazzId) {
+        return CommonResult.autoResult(clazzService.importClazzStudents(file, clazzId));
+    }
+
+    /**
+     * 导出班级学生信息模板
+     */
+    @GetMapping("/exportClazzTemplate")
+    public ResponseEntity<byte[]> exportClazzTemplate() {
+        return clazzService.exportClazzTemplate();
     }
 }
 
