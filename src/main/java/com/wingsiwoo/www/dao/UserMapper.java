@@ -41,7 +41,6 @@ public interface UserMapper extends BaseMapper<User> {
     default List<User> selectBatchByAccounts(List<String> accounts) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda()
-                .select(User::getAccount)
                 .in(CollectionUtils.isNotEmpty(accounts), User::getAccount, accounts);
         return selectList(wrapper);
     }

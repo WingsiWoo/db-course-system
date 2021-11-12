@@ -124,10 +124,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public ResponseEntity<byte[]> exportUserTemplate() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ExcelUtil.writeToExcel("用户信息模板", byteArrayOutputStream, UserExcelBo.class, null, new LinkedList<>(), 1, 0);
+        ExcelUtil.writeToExcel("用户信息模板.xlsx", byteArrayOutputStream, UserExcelBo.class, null, new LinkedList<>(), 1, 0);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentDispositionFormData("attachment", "用户信息模板");
+        httpHeaders.setContentDispositionFormData("attachment", "用户信息模板.xlsx");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
     }

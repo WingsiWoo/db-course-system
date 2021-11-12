@@ -75,13 +75,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 excelBo.setGrade(gradeMap.get(user.getId()));
                 return excelBo;
             }).collect(Collectors.toList());
-            ExcelUtil.writeToExcel(course.getName() + "成绩", byteArrayOutputStream, StudentGradeExcelBo.class, null, excelBoList, 1, 0);
+            ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, excelBoList, 1, 0);
         } else {
-            ExcelUtil.writeToExcel(course.getName() + "成绩", byteArrayOutputStream, StudentGradeExcelBo.class, null, new LinkedList<>(), 1, 0);
+            ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, new LinkedList<>(), 1, 0);
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentDispositionFormData("attachment", course.getName() + "成绩");
+        httpHeaders.setContentDispositionFormData("attachment", course.getName() + "成绩.xlsx");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
     }
@@ -97,14 +97,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             List<Integer> studentIds = studentCourses.stream().map(StudentCourse::getStudentId).collect(Collectors.toList());
             List<User> users = userMapper.selectBatchIds(studentIds);
             List<UserExcelBo> excelBoList = UserExcelBo.transformToUserExcelBo(users);
-            ExcelUtil.writeToExcel(course.getName() + "学生名单", byteArrayOutputStream, UserExcelBo.class, null, excelBoList, 1, 0);
+            ExcelUtil.writeToExcel(course.getName() + "学生名单.xlsx", byteArrayOutputStream, UserExcelBo.class, null, excelBoList, 1, 0);
         } else {
-            ExcelUtil.writeToExcel(course.getName() + "学生名单", byteArrayOutputStream, UserExcelBo.class, null, new LinkedList<>(), 1, 0);
+            ExcelUtil.writeToExcel(course.getName() + "学生名单.xlsx", byteArrayOutputStream, UserExcelBo.class, null, new LinkedList<>(), 1, 0);
         }
 
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentDispositionFormData("attachment", course.getName() + "学生名单");
+        httpHeaders.setContentDispositionFormData("attachment", course.getName() + "学生名单.xlsx");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
     }
@@ -150,10 +150,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public ResponseEntity<byte[]> exportGradeTemplate() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ExcelUtil.writeToExcel("学生成绩模板", byteArrayOutputStream, StudentGradeExcelBo.class, null, new LinkedList<>(), 1, 0);
+        ExcelUtil.writeToExcel("学生成绩模板.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, new LinkedList<>(), 1, 0);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentDispositionFormData("attachment", "学生成绩模板");
+        httpHeaders.setContentDispositionFormData("attachment", "学生成绩模板.xlsx");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
     }
