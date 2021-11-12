@@ -16,6 +16,7 @@ import com.wingsiwoo.www.service.StudentCourseService;
 import com.wingsiwoo.www.util.ExcelUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -235,5 +237,31 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             }
         }
         return page;
+    }
+
+    @Override
+    public boolean selectCourse(Integer studentId, Integer courseId) {
+        Assert.notNull(userMapper.selectById(studentId), "该学生不存在");
+        Course course = courseMapper.selectById(courseId);
+        Assert.notNull(course, "该课程不存在");
+        Assert.isNull(studentCourseMapper.selectRelation(courseId, studentId), "该学生已选修该门课程");
+        LocalDateTime now = LocalDateTime.now();
+        Assert.isTrue((now.isEqual(course.getSelectStart()) || now.isAfter(course.getSelectStart())) && (now.isEqual(course.getSelectEnd()) || now.isBefore(course.getSelectEnd())),
+                "当前非选课时间");
+        StudentCourse studentCourse = new StudentCourse();
+        studentCourse.setStudentId(studentId);
+        studentCourse.setCourseId(courseId);
+        return studentCourseMapper.insert(studentCourse) == 1;
+    }
+
+    @Override
+    public boolean createCourse(CreateCourseBo createCourseBo) {
+        Assert.notNull(userMapper.selectById(createCourseBo.getTeacherId()), " 该教师不存在");
+        LocalDateTime now = LocalDateTime.now();
+        Assert.isTrue(createCourseBo.getSelectStart().isBefore(createCourseBo.getSelectEnd()) && (now.isEqual(createCourseBo.getSelectStart()) || now.isBefore(createCourseBo.getSelectStart())),
+                "选课时间不合法");
+        Course course = new Course();
+        BeanUtils.copyProperties(createCourseBo, course);
+        return save(course);
     }
 }
