@@ -15,7 +15,7 @@ import com.wingsiwoo.www.service.CourseService;
 import com.wingsiwoo.www.service.StudentCourseService;
 import com.wingsiwoo.www.util.ExcelUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
@@ -109,15 +110,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     @Override
-    public boolean teacherImportGrade(ImportGradeExcelBo excelBo) {
-        Course course = getById(excelBo.getCourseId());
+    public boolean teacherImportGrade(MultipartFile file, Integer teacherId, Integer courseId) {
+        Course course = getById(courseId);
         Assert.notNull(course, "课程不存在");
-        Assert.isTrue(course.getTeacherId().equals(excelBo.getTeacherId()), "非该课程任教老师，不可修改成绩");
+        Assert.isTrue(course.getTeacherId().equals(teacherId), "非该课程任教老师，不可修改成绩");
 
         InputStream inputStream = null;
         List<StudentGradeExcelBo> excelBoList;
         try {
-            inputStream = excelBo.getFile().getInputStream();
+            inputStream = file.getInputStream();
             excelBoList = ExcelUtil.simpleReadFromExcel(inputStream, 0, StudentGradeExcelBo.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("导入失败");
@@ -138,7 +139,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Map<String, Integer> accountMap = users.stream().collect(Collectors.toMap(User::getAccount, User::getId));
         List<StudentCourse> studentCourseList = excelBoList.stream().map(bo -> {
             StudentCourse studentCourse = new StudentCourse();
-            studentCourse.setCourseId(excelBo.getCourseId());
+            studentCourse.setCourseId(courseId);
             studentCourse.setStudentId(accountMap.get(bo.getAccount()));
             studentCourse.setGrade(bo.getGrade());
             return studentCourse;

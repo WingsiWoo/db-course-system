@@ -1,11 +1,12 @@
 package com.wingsiwoo.www.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wingsiwoo.www.entity.bo.ImportUserExcelBo;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
+import com.wingsiwoo.www.entity.bo.UpdatePasswordBo;
 import com.wingsiwoo.www.entity.po.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -26,14 +27,22 @@ public interface UserService extends IService<User> {
 
     /**
      * 导入用户信息
-     * @param excelBo 文件+角色id
+     * @param file 文件
+     * @param roleId 角色id
      * @return 导入结果
      */
-    boolean importUserInfo(ImportUserExcelBo excelBo);
+    boolean importUserInfo(MultipartFile file, Integer roleId);
 
     /**
      * 导出用户模板
      * @return 模板文件
      */
     ResponseEntity<byte[]> exportUserTemplate();
+
+    /**
+     * 修改密码
+     * @param updatePasswordBo updatePasswordBo
+     * @return 修改结果
+     */
+    boolean updatePassword(UpdatePasswordBo updatePasswordBo);
 }

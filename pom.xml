@@ -21,23 +21,11 @@
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <springboot.version>2.3.1.RELEASE</springboot.version>
         <spring-validation.version>2.3.1.RELEASE</spring-validation.version>
-        <commons-lang.version>2.6</commons-lang.version>
         <fastjson.version>1.2.72</fastjson.version>
         <easyexcel.version>2.1.6</easyexcel.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-engine-core</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -90,7 +78,7 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
+            <version>2.6</version>
         </dependency>
 
         <dependency>
@@ -119,9 +107,5 @@
             <version>${easyexcel.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
     </dependencies>
 </project>

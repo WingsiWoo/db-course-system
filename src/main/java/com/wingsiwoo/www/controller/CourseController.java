@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.entity.bo.CoursePageBo;
 import com.wingsiwoo.www.entity.bo.CreateCourseBo;
-import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.service.CourseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -58,8 +58,10 @@ public class CourseController {
      * @return 导入结果
      */
     @PostMapping("/teacherImportGrade")
-    public CommonResult<Void> teacherImportGrade(@Validated @RequestBody ImportGradeExcelBo excelBo) {
-        return CommonResult.autoResult(courseService.teacherImportGrade(excelBo));
+    public CommonResult<Void> teacherImportGrade(@NotNull(message = "文件不可为空") @RequestParam("file") MultipartFile file,
+                                                 @NotNull(message = "教师id不可为空") @RequestParam("teacherId") Integer teacherId,
+                                                 @NotNull(message = "课程id不可为空") @RequestParam("courseId") Integer courseId) {
+        return CommonResult.autoResult(courseService.teacherImportGrade(file, teacherId, courseId));
     }
 
     /**

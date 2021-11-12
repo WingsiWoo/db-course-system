@@ -56,7 +56,7 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
 
         List<User> users = userMapper.selectBatchByClazzId(clazzId);
         List<UserExcelBo> excelBoList = UserExcelBo.transformToUserExcelBo(users);
-        String clazzName = NameUtil.getClazzName(year, college.getName(), speciality.getName(), clazz.getIndex());
+        String clazzName = NameUtil.getClazzName(year, college.getName(), speciality.getName(), clazz.getClazzIndex());
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ExcelUtil.writeToExcel(clazzName + "学生信息",

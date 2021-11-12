@@ -46,7 +46,7 @@ public class Clazz {
     /**
      * 班级序号
      */
-    @TableField(value = "index")
-    private Integer index;
+    @TableField(value = "clazz_index")
+    private Integer clazzIndex;
 
 }

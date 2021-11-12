@@ -1,12 +1,11 @@
 package com.wingsiwoo.www.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wingsiwoo.www.dao.RoleMapper;
 import com.wingsiwoo.www.dao.UserMapper;
 import com.wingsiwoo.www.dao.UserRoleMapper;
-import com.wingsiwoo.www.entity.bo.ImportUserExcelBo;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
+import com.wingsiwoo.www.entity.bo.UpdatePasswordBo;
 import com.wingsiwoo.www.entity.bo.UserExcelBo;
 import com.wingsiwoo.www.entity.po.User;
 import com.wingsiwoo.www.entity.po.UserRole;
@@ -15,13 +14,14 @@ import com.wingsiwoo.www.service.UserService;
 import com.wingsiwoo.www.util.ExcelUtil;
 import com.wingsiwoo.www.util.MD5Util;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
@@ -48,8 +48,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
-    @Resource
-    private RoleMapper roleMapper;
 
     @Resource
     private UserRoleService userRoleService;
@@ -58,18 +56,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public LoginResultBo login(LoginBo loginBo) {
         User user = userMapper.selectByAccount(loginBo.getAccount());
         Assert.notNull(user, "账户不存在");
-        Assert.isTrue(MD5Util.getMD5String(loginBo.getPassword()).equals(user.getPassword()), "密码不正确");
+        Assert.isTrue(MD5Util.checkPassword(loginBo.getPassword(), user.getPassword()), "密码不正确");
         UserRole userRole = userRoleMapper.selectByUserId(user.getId());
         Assert.notNull(userRole, "用户角色关系不存在");
         return new LoginResultBo(loginBo.getAccount(), user.getName(), userRole.getRoleId());
     }
 
     @Override
-    public boolean importUserInfo(ImportUserExcelBo excelBo) {
+    public boolean importUserInfo(MultipartFile file, Integer roleId) {
         InputStream inputStream = null;
         List<UserExcelBo> excelBoList;
         try {
-            inputStream = excelBo.getFile().getInputStream();
+            inputStream = file.getInputStream();
             excelBoList = ExcelUtil.simpleReadFromExcel(inputStream, 0, UserExcelBo.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("导入失败");
@@ -116,7 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 插入用户-角色信息
         List<UserRole> userRoles = users.stream().map(user -> {
             UserRole userRole = new UserRole();
-            userRole.setRoleId(excelBo.getRoleId());
+            userRole.setRoleId(roleId);
             userRole.setUserId(user.getId());
             return userRole;
         }).collect(Collectors.toList());
@@ -132,5 +130,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         httpHeaders.setContentDispositionFormData("attachment", "用户信息模板");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
+    }
+
+    @Override
+    public boolean updatePassword(UpdatePasswordBo updatePasswordBo) {
+        User user = getById(updatePasswordBo.getUserId());
+        Assert.notNull(user, "用户不存在");
+        Assert.isTrue(MD5Util.checkPassword(updatePasswordBo.getOldPassword(), user.getPassword()), "旧密码错误");
+        user.setPassword(MD5Util.getMD5String(updatePasswordBo.getNewPassword()));
+        return save(user);
     }
 }

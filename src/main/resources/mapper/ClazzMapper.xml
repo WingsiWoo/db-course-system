@@ -7,11 +7,13 @@
         <id column="id" property="id" />
         <result column="spec_id" property="specId" />
         <result column="year_id" property="yearId" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="clazz_index" property="clazzIndex" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, spec_id, year_id
+        id, spec_id, year_id, teacher_id, clazz_index
     </sql>
 
 </mapper>

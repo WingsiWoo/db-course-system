@@ -60,8 +60,8 @@ public class Course {
     /**
      * 上课时间
      */
-    @TableField(value = "time")
-    private String time;
+    @TableField(value = "course_time")
+    private String courseTime;
 
     /**
      * 上课地点

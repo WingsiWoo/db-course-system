@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wingsiwoo.www.entity.bo.CoursePageBo;
 import com.wingsiwoo.www.entity.bo.CreateCourseBo;
-import com.wingsiwoo.www.entity.bo.ImportGradeExcelBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.entity.po.Course;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ public interface CourseService extends IService<Course> {
      *
      * @return 导入结果
      */
-    boolean teacherImportGrade(ImportGradeExcelBo excelBo);
+    boolean teacherImportGrade(MultipartFile file, Integer teacherId, Integer courseId);
 
     /**
      * 导出学生成绩excel模板
