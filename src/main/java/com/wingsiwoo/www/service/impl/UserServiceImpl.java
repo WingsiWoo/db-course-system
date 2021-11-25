@@ -102,6 +102,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             user.setAccount(bo.getAccount());
             // 密码默认为学号/工号后6位
+            Assert.isTrue(bo.getAccount().length() >= 6, "工号/学号" + bo.getAccount() + "小于6位");
             user.setPassword(MD5Util.getMD5String(bo.getAccount().substring(bo.getAccount().length() - 6)));
             user.setName(bo.getName());
             user.setPhone(bo.getPhone());

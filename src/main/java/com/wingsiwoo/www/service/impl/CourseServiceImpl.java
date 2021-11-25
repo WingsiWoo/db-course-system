@@ -186,7 +186,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 coursePageBo.setName(course.getName());
                 coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
                 coursePageBo.setCredit(course.getCredit());
-                coursePageBo.setTime(course.getName());
+                coursePageBo.setTime(course.getCourseTime());
                 coursePageBo.setAddress(course.getAddress());
                 return coursePageBo;
             }).collect(Collectors.toList());
@@ -231,7 +231,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                     coursePageBo.setName(course.getName());
                     coursePageBo.setTeacherName(user.getName());
                     coursePageBo.setCredit(course.getCredit());
-                    coursePageBo.setTime(course.getName());
+                    coursePageBo.setTime(course.getCourseTime());
                     coursePageBo.setAddress(course.getAddress());
                     return coursePageBo;
                 }).collect(Collectors.toList());
@@ -261,10 +261,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     public boolean createCourse(CreateCourseBo createCourseBo) {
         Assert.notNull(userMapper.selectById(createCourseBo.getTeacherId()), " 该教师不存在");
         LocalDateTime now = LocalDateTime.now();
-        Assert.isTrue(createCourseBo.getSelectStart().isBefore(createCourseBo.getSelectEnd()) && (now.isEqual(createCourseBo.getSelectStart()) || now.isBefore(createCourseBo.getSelectStart())),
-                "选课时间不合法");
+        Assert.isTrue(createCourseBo.getSelectStart().isBefore(createCourseBo.getSelectEnd()), "选课开始时间应在选课结束时间之前");
+        Assert.isTrue(now.isBefore(createCourseBo.getSelectEnd()), "选课时间段已过时");
         Course course = new Course();
         BeanUtils.copyProperties(createCourseBo, course);
+        course.setCourseTime(createCourseBo.getTime());
         return save(course);
     }
 }
