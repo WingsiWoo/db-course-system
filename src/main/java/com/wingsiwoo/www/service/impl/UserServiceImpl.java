@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Assert.isTrue(MD5Util.checkPassword(loginBo.getPassword(), user.getPassword()), "密码不正确");
         UserRole userRole = userRoleMapper.selectByUserId(user.getId());
         Assert.notNull(userRole, "用户角色关系不存在");
-        return new LoginResultBo(loginBo.getAccount(), user.getName(), userRole.getRoleId());
+        return new LoginResultBo(user.getId(), loginBo.getAccount(), user.getName(), userRole.getRoleId());
     }
 
     @Override

@@ -177,20 +177,22 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     public Page<CoursePageBo> showCoursesInPage() {
         List<Course> courses = courseMapper.selectList(null);
         Page<CoursePageBo> page = new Page<>(1, 10);
-        Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(User::getId, User::getName));
-        List<CoursePageBo> pageBos = courses.stream().map(course -> {
-            CoursePageBo coursePageBo = new CoursePageBo();
-            coursePageBo.setId(course.getId());
-            coursePageBo.setName(course.getName());
-            coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
-            coursePageBo.setCredit(course.getCredit());
-            coursePageBo.setTime(course.getName());
-            coursePageBo.setAddress(course.getAddress());
-            return coursePageBo;
-        }).collect(Collectors.toList());
-        page.setRecords(pageBos);
-        page.setTotal(pageBos.size());
+        if(CollectionUtils.isNotEmpty(courses)) {
+            Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(User::getId, User::getName));
+            List<CoursePageBo> pageBos = courses.stream().map(course -> {
+                CoursePageBo coursePageBo = new CoursePageBo();
+                coursePageBo.setId(course.getId());
+                coursePageBo.setName(course.getName());
+                coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
+                coursePageBo.setCredit(course.getCredit());
+                coursePageBo.setTime(course.getName());
+                coursePageBo.setAddress(course.getAddress());
+                return coursePageBo;
+            }).collect(Collectors.toList());
+            page.setRecords(pageBos);
+            page.setTotal(pageBos.size());
+        }
         return page;
     }
 

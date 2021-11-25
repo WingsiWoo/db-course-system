@@ -8,7 +8,6 @@ import com.wingsiwoo.www.entity.bo.CreateCourseBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.service.CourseService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +23,7 @@ import javax.validation.constraints.NotNull;
  * @author WingsiWoo
  * @since 2021-11-11
  */
-@Controller
+@RestController
 @RequestMapping("/api/course")
 public class CourseController {
     @Resource

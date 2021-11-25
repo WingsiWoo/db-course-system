@@ -4,11 +4,7 @@ package com.wingsiwoo.www.controller;
 import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.service.ClazzService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -22,7 +18,7 @@ import javax.validation.constraints.NotNull;
  * @author WingsiWoo
  * @since 2021-11-11
  */
-@Controller
+@RestController
 @RequestMapping("/api/clazz")
 public class ClazzController {
     @Resource

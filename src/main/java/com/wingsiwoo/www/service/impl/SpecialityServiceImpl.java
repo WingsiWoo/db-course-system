@@ -8,6 +8,7 @@ import com.wingsiwoo.www.entity.bo.SpecialityPageBo;
 import com.wingsiwoo.www.entity.po.College;
 import com.wingsiwoo.www.entity.po.Speciality;
 import com.wingsiwoo.www.service.SpecialityService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -35,16 +36,18 @@ public class SpecialityServiceImpl extends ServiceImpl<SpecialityMapper, Special
     public Page<SpecialityPageBo> getAllSpecInfo() {
         Page<SpecialityPageBo> page = new Page<>(1, 10);
         List<Speciality> specialities = specialityMapper.selectList(null);
-        Map<Integer, String> collegeMap = collegeMapper.selectBatchIds(specialities.stream().map(Speciality::getCollegeId).collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(College::getId, College::getName));
-        List<SpecialityPageBo> collect = specialities.stream().map(speciality -> {
-            SpecialityPageBo specialityPageBo = new SpecialityPageBo();
-            BeanUtils.copyProperties(speciality, specialityPageBo);
-            specialityPageBo.setCollegeName(collegeMap.get(speciality.getCollegeId()));
-            return specialityPageBo;
-        }).collect(Collectors.toList());
-        page.setRecords(collect);
-        page.setTotal(collect.size());
+        if(CollectionUtils.isNotEmpty(specialities)) {
+            Map<Integer, String> collegeMap = collegeMapper.selectBatchIds(specialities.stream().map(Speciality::getCollegeId).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(College::getId, College::getName));
+            List<SpecialityPageBo> collect = specialities.stream().map(speciality -> {
+                SpecialityPageBo specialityPageBo = new SpecialityPageBo();
+                BeanUtils.copyProperties(speciality, specialityPageBo);
+                specialityPageBo.setCollegeName(collegeMap.get(speciality.getCollegeId()));
+                return specialityPageBo;
+            }).collect(Collectors.toList());
+            page.setRecords(collect);
+            page.setTotal(collect.size());
+        }
         return page;
     }
 }

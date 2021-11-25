@@ -7,7 +7,6 @@ import com.wingsiwoo.www.entity.bo.LoginResultBo;
 import com.wingsiwoo.www.entity.bo.UpdatePasswordBo;
 import com.wingsiwoo.www.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,7 @@ import javax.validation.constraints.NotNull;
  * @author WingsiWoo
  * @since 2021-11-11
  */
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserController {
     @Resource
@@ -58,6 +57,7 @@ public class UserController {
 
     /**
      * 修改密码
+     *
      * @param updatePasswordBo updatePasswordBo
      * @return 修改结果
      */
