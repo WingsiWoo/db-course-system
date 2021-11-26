@@ -1,12 +1,10 @@
 package com.wingsiwoo.www.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.dao.UserMapper;
 import com.wingsiwoo.www.dao.UserRoleMapper;
-import com.wingsiwoo.www.entity.bo.LoginBo;
-import com.wingsiwoo.www.entity.bo.LoginResultBo;
-import com.wingsiwoo.www.entity.bo.UpdatePasswordBo;
-import com.wingsiwoo.www.entity.bo.UserExcelBo;
+import com.wingsiwoo.www.entity.bo.*;
 import com.wingsiwoo.www.entity.po.User;
 import com.wingsiwoo.www.entity.po.UserRole;
 import com.wingsiwoo.www.service.UserRoleService;
@@ -27,11 +25,12 @@ import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wingsiwoo.www.constant.RoleConstant.transform;
+import static com.wingsiwoo.www.constant.RoleConstant.*;
+import static com.wingsiwoo.www.constant.SexConstant.transform;
 import static com.wingsiwoo.www.constant.SexConstant.*;
 
 /**
@@ -140,5 +139,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Assert.isTrue(MD5Util.checkPassword(updatePasswordBo.getOldPassword(), user.getPassword()), "旧密码错误");
         user.setPassword(MD5Util.getMD5String(updatePasswordBo.getNewPassword()));
         return updateById(user);
+    }
+
+    @Override
+    public Page<ShowUserBo> showAllUserInPage(Integer roleId) {
+        Page<ShowUserBo> page = new Page<>(1, 10);
+        List<UserRole> userRoles;
+        switch (roleId) {
+            case 1:
+                userRoles = userRoleMapper.selectByRoleId(roleId);
+                if (CollectionUtils.isNotEmpty(userRoles)) {
+                    List<Integer> userIds = userRoles.stream().map(UserRole::getUserId).collect(Collectors.toList());
+                    List<User> users = userMapper.selectBatchIds(userIds);
+                    List<ShowUserBo> records = users.stream().sorted(Comparator.comparing(User::getAccount))
+                            .map(user -> ShowUserBo.userTransferToBo(user, STUDENT))
+                            .collect(Collectors.toList());
+                    page.setRecords(records);
+                    page.setTotal(records.size());
+                }
+                break;
+            case 2:
+                userRoles = userRoleMapper.selectByRoleId(roleId);
+                if (CollectionUtils.isNotEmpty(userRoles)) {
+                    List<Integer> userIds = userRoles.stream().map(UserRole::getUserId).collect(Collectors.toList());
+                    List<User> users = userMapper.selectBatchIds(userIds);
+                    List<ShowUserBo> records = users.stream().sorted(Comparator.comparing(User::getAccount))
+                            .map(user -> ShowUserBo.userTransferToBo(user, TEACHER))
+                            .collect(Collectors.toList());
+                    page.setRecords(records);
+                    page.setTotal(records.size());
+                }
+                break;
+            case 3:
+                List<User> userList = userMapper.selectList(null);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    List<Integer> userIds = userList.stream().map(User::getId).collect(Collectors.toList());
+                    Map<Integer, Integer> map = userRoleMapper.selectBatchByUserId(userIds).stream()
+                            .collect(Collectors.toMap(UserRole::getUserId, UserRole::getRoleId));
+                    List<ShowUserBo> records = userList.stream().sorted(Comparator.comparing(User::getAccount))
+                            .map(user -> ShowUserBo.userTransferToBo(user, transform(map.get(user.getId()))))
+                            .collect(Collectors.toList());
+                    page.setRecords(records);
+                    page.setTotal(records.size());
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("传入选择类型错误");
+        }
+        return page;
     }
 }

@@ -1,11 +1,14 @@
 package com.wingsiwoo.www.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.entity.bo.LoginBo;
 import com.wingsiwoo.www.entity.bo.LoginResultBo;
+import com.wingsiwoo.www.entity.bo.ShowUserBo;
 import com.wingsiwoo.www.entity.bo.UpdatePasswordBo;
 import com.wingsiwoo.www.service.UserService;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +67,16 @@ public class UserController {
     @PostMapping("/updatePassword")
     public CommonResult<Void> updatePassword(@Validated @RequestBody UpdatePasswordBo updatePasswordBo) {
         return CommonResult.autoResult(userService.updatePassword(updatePasswordBo));
+    }
+
+    /**
+     * 分页展示所有用户信息
+     * 1-学生，2-教师。3-全部
+     * @return CommonResult<Page<ShowUserBo>>
+     */
+    @GetMapping("/showAllUserInPage")
+    public CommonResult<Page<ShowUserBo>> showAllUserInPage(@NotNull(message = "角色类型不可为空") @Range(min = 1, max = 3) Integer roleId) {
+        return CommonResult.operateSuccess(userService.showAllUserInPage(roleId));
     }
 }
 
