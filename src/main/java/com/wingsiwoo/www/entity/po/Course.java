@@ -69,4 +69,10 @@ public class Course {
     @TableField(value = "address")
     private String address;
 
+    /**
+     * 创建时间
+     */
+    @TableField(value = "create_time")
+    private LocalDateTime createTime;
+
 }

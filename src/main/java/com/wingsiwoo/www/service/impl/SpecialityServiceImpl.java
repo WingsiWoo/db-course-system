@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.dao.CollegeMapper;
 import com.wingsiwoo.www.dao.SpecialityMapper;
+import com.wingsiwoo.www.entity.bo.SpecialityBo;
 import com.wingsiwoo.www.entity.bo.SpecialityPageBo;
 import com.wingsiwoo.www.entity.po.College;
 import com.wingsiwoo.www.entity.po.Speciality;
@@ -49,5 +50,20 @@ public class SpecialityServiceImpl extends ServiceImpl<SpecialityMapper, Special
             page.setTotal(collect.size());
         }
         return page;
+    }
+
+    @Override
+    public boolean addSpeciality(SpecialityBo specialityBo) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteSpeciality(Integer id) {
+        return false;
+    }
+
+    @Override
+    public boolean updateSpeciality(SpecialityBo specialityBo) {
+        return false;
     }
 }

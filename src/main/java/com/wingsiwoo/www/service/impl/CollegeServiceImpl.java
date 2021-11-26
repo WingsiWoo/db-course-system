@@ -3,6 +3,7 @@ package com.wingsiwoo.www.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.dao.CollegeMapper;
+import com.wingsiwoo.www.entity.bo.CollegeBo;
 import com.wingsiwoo.www.entity.po.College;
 import com.wingsiwoo.www.service.CollegeService;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,20 @@ public class CollegeServiceImpl extends ServiceImpl<CollegeMapper, College> impl
         Page<College> page = new Page<>(1, 10);
         collegeMapper.selectPage(page, null);
         return page;
+    }
+
+    @Override
+    public boolean addCollege(CollegeBo collegeBo) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteCollege(Integer id) {
+        return false;
+    }
+
+    @Override
+    public boolean updateCollege(CollegeBo collegeBo) {
+        return false;
     }
 }
