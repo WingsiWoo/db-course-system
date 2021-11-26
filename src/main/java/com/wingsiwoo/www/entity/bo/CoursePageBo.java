@@ -2,6 +2,8 @@ package com.wingsiwoo.www.entity.bo;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * @author WingsiWoo
  * @date 2021/11/11
@@ -37,4 +39,14 @@ public class CoursePageBo {
      * 上课地点
      */
     private String address;
+
+    /**
+     * 选课开始时间
+     */
+    private LocalDateTime selectStart;
+
+    /**
+     * 选课结束时间
+     */
+    private LocalDateTime selectEnd;
 }

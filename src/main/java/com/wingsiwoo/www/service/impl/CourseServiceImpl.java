@@ -188,6 +188,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 coursePageBo.setCredit(course.getCredit());
                 coursePageBo.setTime(course.getCourseTime());
                 coursePageBo.setAddress(course.getAddress());
+                coursePageBo.setSelectStart(course.getSelectStart());
+                coursePageBo.setSelectEnd(course.getSelectEnd());
                 return coursePageBo;
             }).collect(Collectors.toList());
             page.setRecords(pageBos);
@@ -217,6 +219,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                     coursePageBo.setCredit(course.getCredit());
                     coursePageBo.setTime(course.getName());
                     coursePageBo.setAddress(course.getAddress());
+                    coursePageBo.setSelectStart(course.getSelectStart());
+                    coursePageBo.setSelectEnd(course.getSelectEnd());
                     return coursePageBo;
                 }).collect(Collectors.toList());
                 page.setRecords(pageBos);

@@ -6,6 +6,7 @@ import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.entity.po.College;
 import com.wingsiwoo.www.service.CollegeService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +30,7 @@ public class CollegeController {
     public CommonResult<Page<College>> getAllCollegeInfo() {
         return CommonResult.operateSuccess(collegeService.getAllCollegeInfo());
     }
+
+
 }
 
