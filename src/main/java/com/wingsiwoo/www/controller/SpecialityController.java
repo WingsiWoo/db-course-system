@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wingsiwoo.www.auth.result.CommonResult;
 import com.wingsiwoo.www.entity.bo.SpecialityBo;
 import com.wingsiwoo.www.entity.bo.SpecialityPageBo;
+import com.wingsiwoo.www.entity.po.Speciality;
 import com.wingsiwoo.www.service.SpecialityService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -37,6 +37,7 @@ public class CollegeServiceImpl extends ServiceImpl<CollegeMapper, College> impl
 
     @Override
     public boolean addCollege(CollegeBo collegeBo) {
+        Assert.isNull(collegeMapper.getByName(collegeBo.getName()), "学院名称不可重复");
         College college = new College();
         college.setName(collegeBo.getName());
         college.setIntroduction(collegeBo.getIntroduction());
@@ -56,6 +57,11 @@ public class CollegeServiceImpl extends ServiceImpl<CollegeMapper, College> impl
     public boolean updateCollege(College college) {
         Assert.notNull(college.getId(), "学院id不可为空");
         Assert.notNull(college.getName(), "学院名称不可为空");
+        College oldCollege = getById(college.getId());
+        // 如果想要修改学院名称
+        if(!oldCollege.getName().equals(college.getName())) {
+            Assert.isNull(collegeMapper.getByName(college.getName()), "学院名称不可重复");
+        }
         Assert.notNull(getById(college.getId()), "学院不存在");
         return updateById(college);
     }

@@ -216,7 +216,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                             coursePageBo.setName(course.getName());
                             coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
                             coursePageBo.setCredit(course.getCredit());
-                            coursePageBo.setTime(course.getName());
+                            coursePageBo.setTime(course.getCourseTime());
                             coursePageBo.setAddress(course.getAddress());
                             coursePageBo.setSelectStart(course.getSelectStart());
                             coursePageBo.setSelectEnd(course.getSelectEnd());

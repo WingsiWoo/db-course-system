@@ -139,6 +139,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Assert.notNull(user, "用户不存在");
         Assert.isTrue(MD5Util.checkPassword(updatePasswordBo.getOldPassword(), user.getPassword()), "旧密码错误");
         user.setPassword(MD5Util.getMD5String(updatePasswordBo.getNewPassword()));
-        return save(user);
+        return updateById(user);
     }
 }
