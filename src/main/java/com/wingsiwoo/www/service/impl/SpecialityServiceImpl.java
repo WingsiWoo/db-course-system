@@ -63,7 +63,7 @@ public class SpecialityServiceImpl extends ServiceImpl<SpecialityMapper, Special
     }
 
     @Override
-    public boolean updateSpeciality(SpecialityBo specialityBo) {
+    public boolean updateSpeciality(Speciality speciality) {
         return false;
     }
 }

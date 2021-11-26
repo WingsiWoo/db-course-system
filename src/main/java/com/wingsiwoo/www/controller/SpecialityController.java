@@ -42,8 +42,8 @@ public class SpecialityController {
     }
 
     @PostMapping("/updateSpeciality")
-    public CommonResult<Void> updateSpeciality(@Validated @RequestBody SpecialityBo specialityBo) {
-        return CommonResult.autoResult(specialityService.updateSpeciality(specialityBo));
+    public CommonResult<Void> updateSpeciality(@RequestBody Speciality speciality) {
+        return CommonResult.autoResult(specialityService.updateSpeciality(speciality));
     }
 }
 

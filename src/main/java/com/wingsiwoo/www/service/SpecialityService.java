@@ -41,8 +41,8 @@ public interface SpecialityService extends IService<Speciality> {
     /**
      * 更改专业信息
      *
-     * @param specialityBo 专业信息
+     * @param speciality 专业信息
      * @return 更改是否成功
      */
-    boolean updateSpeciality(SpecialityBo specialityBo);
+    boolean updateSpeciality(Speciality speciality);
 }

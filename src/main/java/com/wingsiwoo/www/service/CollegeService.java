@@ -41,8 +41,8 @@ public interface CollegeService extends IService<College> {
     /**
      * 更改学院信息
      *
-     * @param collegeBo 学院信息
+     * @param college 学院信息
      * @return 更改是否成功
      */
-    boolean updateCollege(CollegeBo collegeBo);
+    boolean updateCollege(College college);
 }

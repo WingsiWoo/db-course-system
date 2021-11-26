@@ -42,8 +42,8 @@ public class CollegeController {
     }
 
     @PostMapping("/updateCollege")
-    public CommonResult<Void> updateCollege(@Validated @RequestBody CollegeBo collegeBo) {
-        return CommonResult.autoResult(collegeService.updateCollege(collegeBo));
+    public CommonResult<Void> updateCollege(@RequestBody College college) {
+        return CommonResult.autoResult(collegeService.updateCollege(college));
     }
 }
 
