@@ -4,14 +4,14 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wingsiwoo.www.entity.po.Year">
-        <id column="id" property="id" />
-        <result column="year" property="year" />
-        <result column="graduate" property="graduate" />
+        <id column="id" property="id"/>
+        <result column="grade" property="grade"/>
+        <result column="graduate" property="graduate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, year, graduate
+        id, grade, graduate
     </sql>
 
 </mapper>

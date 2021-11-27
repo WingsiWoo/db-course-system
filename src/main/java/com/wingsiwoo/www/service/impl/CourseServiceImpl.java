@@ -3,11 +3,9 @@ package com.wingsiwoo.www.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.constant.RoleConstant;
-import com.wingsiwoo.www.dao.CourseMapper;
-import com.wingsiwoo.www.dao.StudentCourseMapper;
-import com.wingsiwoo.www.dao.UserMapper;
-import com.wingsiwoo.www.dao.UserRoleMapper;
+import com.wingsiwoo.www.dao.*;
 import com.wingsiwoo.www.entity.bo.*;
+import com.wingsiwoo.www.entity.po.Address;
 import com.wingsiwoo.www.entity.po.Course;
 import com.wingsiwoo.www.entity.po.StudentCourse;
 import com.wingsiwoo.www.entity.po.User;
@@ -31,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +52,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     private UserRoleMapper userRoleMapper;
     @Resource
     private CourseMapper courseMapper;
+    @Resource
+    private AddressMapper addressMapper;
 
     @Override
     public ResponseEntity<byte[]> exportGradeExcel(Integer courseId) {
@@ -177,18 +178,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         if (CollectionUtils.isNotEmpty(courses)) {
             Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
                     .stream().collect(Collectors.toMap(User::getId, User::getName));
+            Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
             List<CoursePageBo> pageBos = courses.stream().sorted(Comparator.comparing(Course::getCreateTime).reversed())
                     .map(course -> {
-                        CoursePageBo coursePageBo = new CoursePageBo();
-                        coursePageBo.setId(course.getId());
-                        coursePageBo.setName(course.getName());
-                        coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
-                        coursePageBo.setCredit(course.getCredit());
-                        coursePageBo.setTime(course.getCourseTime());
-                        coursePageBo.setAddress(course.getAddress());
-                        coursePageBo.setSelectStart(course.getSelectStart());
-                        coursePageBo.setSelectEnd(course.getSelectEnd());
-                        return coursePageBo;
+                        Address address = addressMap.get(course.getAddressId());
+                        return CoursePageBo.courseTransferToBo(course, teacherMap.get(course.getTeacherId()), address);
                     }).collect(Collectors.toList());
             page.setRecords(pageBos);
             page.setTotal(pageBos.size());
@@ -209,18 +204,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 List<Course> courses = courseMapper.selectBatchIds(studentCourses.stream().map(StudentCourse::getCourseId).collect(Collectors.toList()));
                 Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
                         .stream().collect(Collectors.toMap(User::getId, User::getName));
+                Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
+                        .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
                 List<CoursePageBo> pageBos = courses.stream().sorted(Comparator.comparing(Course::getCreateTime).reversed())
                         .map(course -> {
-                            CoursePageBo coursePageBo = new CoursePageBo();
-                            coursePageBo.setId(course.getId());
-                            coursePageBo.setName(course.getName());
-                            coursePageBo.setTeacherName(teacherMap.get(course.getTeacherId()));
-                            coursePageBo.setCredit(course.getCredit());
-                            coursePageBo.setTime(course.getCourseTime());
-                            coursePageBo.setAddress(course.getAddress());
-                            coursePageBo.setSelectStart(course.getSelectStart());
-                            coursePageBo.setSelectEnd(course.getSelectEnd());
-                            return coursePageBo;
+                            Address address = addressMap.get(course.getAddressId());
+                            return CoursePageBo.courseTransferToBo(course, teacherMap.get(course.getTeacherId()), address);
                         }).collect(Collectors.toList());
                 page.setRecords(pageBos);
                 page.setTotal(pageBos.size());
@@ -228,15 +217,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         } else if (RoleConstant.ROLE_TEACHER.equals(roleId)) {
             List<Course> courses = courseMapper.selectByTeacherId(userId);
             if (CollectionUtils.isNotEmpty(courses)) {
+                Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
+                        .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
                 List<CoursePageBo> pageBos = courses.stream().map(course -> {
-                    CoursePageBo coursePageBo = new CoursePageBo();
-                    coursePageBo.setId(course.getId());
-                    coursePageBo.setName(course.getName());
-                    coursePageBo.setTeacherName(user.getName());
-                    coursePageBo.setCredit(course.getCredit());
-                    coursePageBo.setTime(course.getCourseTime());
-                    coursePageBo.setAddress(course.getAddress());
-                    return coursePageBo;
+                    Address address = addressMap.get(course.getAddressId());
+                    return CoursePageBo.courseTransferToBo(course, user.getName(), address);
                 }).collect(Collectors.toList());
                 page.setRecords(pageBos);
                 page.setTotal(pageBos.size());
@@ -270,6 +255,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         BeanUtils.copyProperties(createCourseBo, course);
         course.setCourseTime(createCourseBo.getTime());
         course.setCreateTime(LocalDateTime.now());
+        Address address = addressMapper.getByInfo(createCourseBo.getBuilding(), createCourseBo.getNum());
+        Assert.notNull(address, "课室不存在");
+        course.setAddressId(address.getId());
         return save(course);
     }
 }

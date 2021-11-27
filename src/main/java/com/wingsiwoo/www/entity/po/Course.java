@@ -66,8 +66,8 @@ public class Course {
     /**
      * 上课地点
      */
-    @TableField(value = "address")
-    private String address;
+    @TableField(value = "address_id")
+    private Integer addressId;
 
     /**
      * 创建时间

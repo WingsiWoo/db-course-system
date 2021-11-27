@@ -56,7 +56,7 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
         Clazz clazz = getById(clazzId);
         Assert.isTrue(Objects.nonNull(clazz), "班级不存在");
         // 搜索完整班级名相关信息
-        Integer year = yearMapper.selectById(clazz.getYearId()).getYear();
+        Integer year = yearMapper.selectById(clazz.getYearId()).getGrade();
         Speciality speciality = specialityMapper.selectById(clazz.getSpecId());
         College college = collegeMapper.selectById(speciality.getCollegeId());
 

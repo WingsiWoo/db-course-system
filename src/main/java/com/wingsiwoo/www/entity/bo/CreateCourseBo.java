@@ -49,8 +49,14 @@ public class CreateCourseBo {
     private String time;
 
     /**
-     * 上课地点
+     * 教学楼号
      */
-    @NotEmpty(message = "上课地点不可为空")
-    private String address;
+    @NotNull(message = "教学楼号不可为空")
+    private Integer building;
+
+    /**
+     * 课室号
+     */
+    @NotNull(message = "课室号不可为空")
+    private Integer num;
 }
