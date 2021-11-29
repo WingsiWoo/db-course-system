@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
         }
 
-        Assert.notNull(excelBoList, "导入失败");
+        Assert.isTrue(CollectionUtils.isNotEmpty(excelBoList), "传入的excel无内容");
         // 过滤掉没有填写账户的
         excelBoList = excelBoList.stream().filter(bo -> StringUtils.isNotEmpty(bo.getAccount())).collect(Collectors.toList());
         // 检查工号/学号是否唯一

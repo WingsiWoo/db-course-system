@@ -29,4 +29,14 @@ public interface CourseMapper extends BaseMapper<Course> {
                 .eq(Course::getTeacherId, teacherId);
         return selectList(wrapper);
     }
+
+    /**
+     * 根据课程名称模糊查询
+     */
+    default List<Course> selectLikeByName(String name) {
+        QueryWrapper<Course> wrapper = new QueryWrapper<>();
+        wrapper.lambda()
+                .like(Course::getName, name);
+        return selectList(wrapper);
+    }
 }

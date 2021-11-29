@@ -65,12 +65,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         if (CollectionUtils.isNotEmpty(studentCourses)) {
             List<Integer> studentIds = studentCourses.stream().map(StudentCourse::getStudentId).collect(Collectors.toList());
             List<User> users = userMapper.selectBatchIds(studentIds);
-            Map<Integer, Float> gradeMap = studentCourses.stream().collect(Collectors.toMap(StudentCourse::getStudentId, StudentCourse::getGrade));
+            Map<Integer, Float> gradeMap = studentCourses.stream().collect(Collectors.toMap(StudentCourse::getStudentId, studentCourse -> Objects.isNull(studentCourse.getGrade()) ? -1 : studentCourse.getGrade()));
             List<StudentGradeExcelBo> excelBoList = users.stream().map(user -> {
                 StudentGradeExcelBo excelBo = new StudentGradeExcelBo();
                 excelBo.setAccount(user.getAccount());
                 excelBo.setName(user.getName());
-                excelBo.setGrade(gradeMap.get(user.getId()));
+                float grade = gradeMap.get(user.getId());
+                excelBo.setGrade(grade == -1 ? null : grade);
                 return excelBo;
             }).collect(Collectors.toList());
             ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, excelBoList, 1, 0);
@@ -130,19 +131,29 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             }
         }
 
+        Assert.isTrue(CollectionUtils.isNotEmpty(excelBoList), "传入的excel无内容");
         List<String> accounts = excelBoList.stream().map(StudentGradeExcelBo::getAccount).collect(Collectors.toList());
         List<User> users = userMapper.selectBatchByAccounts(accounts);
         accounts.removeAll(users.stream().map(User::getAccount).collect(Collectors.toList()));
         Assert.isTrue(CollectionUtils.isEmpty(accounts), "存在错误的学号：" + StringUtils.join(accounts.toArray(), ","));
         Map<String, Integer> accountMap = users.stream().collect(Collectors.toMap(User::getAccount, User::getId));
-        List<StudentCourse> studentCourseList = excelBoList.stream().map(bo -> {
-            StudentCourse studentCourse = new StudentCourse();
-            studentCourse.setCourseId(courseId);
-            studentCourse.setStudentId(accountMap.get(bo.getAccount()));
-            studentCourse.setGrade(bo.getGrade());
-            return studentCourse;
-        }).collect(Collectors.toList());
-        return studentCourseService.saveBatch(studentCourseList);
+        excelBoList.forEach(bo -> {
+            Integer studentId = accountMap.get(bo.getAccount());
+            StudentCourse oldStudentCourse = studentCourseMapper.selectRelation(courseId, studentId);
+            if (Objects.isNull(oldStudentCourse)) {
+                // 新插入成绩
+                StudentCourse studentCourse = new StudentCourse();
+                studentCourse.setCourseId(courseId);
+                studentCourse.setStudentId(studentId);
+                studentCourse.setGrade(bo.getGrade());
+                Assert.isTrue(studentCourseService.save(studentCourse), "插入失败");
+            } else {
+                // 覆盖原成绩
+                oldStudentCourse.setGrade(bo.getGrade());
+                Assert.isTrue(studentCourseService.updateById(oldStudentCourse), "更新成绩失败");
+            }
+        });
+        return true;
     }
 
     @Override
@@ -259,5 +270,24 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Assert.notNull(address, "课室不存在");
         course.setAddressId(address.getId());
         return save(course);
+    }
+
+    @Override
+    public Page<CoursePageBo> fuzzyCourseName(String name) {
+        List<Course> courses = courseMapper.selectLikeByName(name);
+        Page<CoursePageBo> page = new Page<>(1, 10);
+        if(CollectionUtils.isNotEmpty(courses)) {
+            Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(User::getId, User::getName));
+            Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
+                    .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
+            List<CoursePageBo> pageBos = courses.stream().map(course -> {
+                Address address = addressMap.get(course.getAddressId());
+                return CoursePageBo.courseTransferToBo(course, teacherMap.get(course.getTeacherId()), address);
+            }).collect(Collectors.toList());
+            page.setRecords(pageBos);
+            page.setTotal(pageBos.size());
+        }
+        return page;
     }
 }
