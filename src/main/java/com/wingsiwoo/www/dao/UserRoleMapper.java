@@ -45,4 +45,17 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
                 .eq(UserRole::getRoleId, roleId);
         return selectList(wrapper);
     }
+
+    /**
+     * 查询用户-角色相关信息
+     *
+     * @param userIds 用户id
+     * @return 用户-角色
+     */
+    default List<UserRole> selectBatchByUserId(List<Integer> userIds) {
+        QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
+        wrapper.lambda()
+                .in(UserRole::getUserId, userIds);
+        return selectList(wrapper);
+    }
 }

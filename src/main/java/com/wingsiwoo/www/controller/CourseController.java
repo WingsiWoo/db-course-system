@@ -8,12 +8,12 @@ import com.wingsiwoo.www.entity.bo.CreateCourseBo;
 import com.wingsiwoo.www.entity.bo.UpdateGradeBo;
 import com.wingsiwoo.www.service.CourseService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @author WingsiWoo
  * @since 2021-11-11
  */
-@Controller
+@RestController
 @RequestMapping("/api/course")
 public class CourseController {
     @Resource
@@ -122,6 +122,17 @@ public class CourseController {
     @PostMapping("/createCourse")
     public CommonResult<Void> createCourse(@Validated @RequestBody CreateCourseBo createCourseBo) {
         return CommonResult.autoResult(courseService.createCourse(createCourseBo));
+    }
+
+    /**
+     * 根据课程名称模糊查询
+     *
+     * @param name 课程名称关键字，%name%查询
+     * @return CommonResult<Page < CoursePageBo>>
+     */
+    @GetMapping("/fuzzyCourseName")
+    public CommonResult<Page<CoursePageBo>> fuzzyCourseName(@NotEmpty(message = "关键字不可为空") @RequestParam String name) {
+        return CommonResult.operateSuccess(courseService.fuzzyCourseName(name));
     }
 }
 

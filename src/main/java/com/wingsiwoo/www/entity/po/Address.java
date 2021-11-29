@@ -9,32 +9,26 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * <p>
- *
- * </p>
- *
  * @author WingsiWoo
- * @since 2021-11-11
+ * @date 2021/11/27
  */
 @ToString
 @EqualsAndHashCode
 @Data
-@TableName(value = "year")
-public class Year {
-
+@TableName(value = "address")
+public class Address {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 年度号
+     * 楼号
      */
-    @TableField(value = "grade")
-    private Integer grade;
+    @TableField(value = "building")
+    private Integer building;
 
     /**
-     * 是否为已毕业年级，0-否，1-是
+     * 课室序号
      */
-    @TableField(value = "graduate")
-    private Byte graduate;
-
+    @TableField(value = "num")
+    private Integer num;
 }

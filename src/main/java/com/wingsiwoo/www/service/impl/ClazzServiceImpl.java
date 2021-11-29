@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -56,12 +57,16 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
         Clazz clazz = getById(clazzId);
         Assert.isTrue(Objects.nonNull(clazz), "班级不存在");
         // 搜索完整班级名相关信息
-        Integer year = yearMapper.selectById(clazz.getYearId()).getYear();
+        Integer year = yearMapper.selectById(clazz.getYearId()).getGrade();
         Speciality speciality = specialityMapper.selectById(clazz.getSpecId());
         College college = collegeMapper.selectById(speciality.getCollegeId());
 
         List<User> users = userMapper.selectBatchByClazzId(clazzId);
-        List<UserExcelBo> excelBoList = UserExcelBo.transformToUserExcelBo(users);
+        List<UserExcelBo> excelBoList = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(users)) {
+            excelBoList = UserExcelBo.transformToUserExcelBo(users);
+        }
+
         String clazzName = NameUtil.getClazzName(year, college.getName(), speciality.getName(), clazz.getClazzIndex());
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -92,6 +97,8 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
                 }
             }
         }
+
+        Assert.isTrue(CollectionUtils.isNotEmpty(excelBoList), "传入的excel无内容");
         List<String> accounts = excelBoList.stream().map(UserExcelBo::getAccount).collect(Collectors.toList());
         List<User> users = userMapper.selectBatchByAccounts(accounts);
         accounts.removeAll(users.stream().map(User::getAccount).collect(Collectors.toList()));

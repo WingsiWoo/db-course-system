@@ -88,4 +88,12 @@ public interface CourseService extends IService<Course> {
      * @return 开课结果
      */
     boolean createCourse(CreateCourseBo createCourseBo);
+
+    /**
+     * 根据课程名称模糊查询
+     *
+     * @param name 查询关键字
+     * @return Page<CoursePageBo>
+     */
+    Page<CoursePageBo> fuzzyCourseName(String name);
 }

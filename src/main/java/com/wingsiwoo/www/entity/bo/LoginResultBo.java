@@ -11,6 +11,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class LoginResultBo {
     /**
+     * id
+     */
+    private Integer id;
+
+    /**
      * 账户
      */
     private String account;

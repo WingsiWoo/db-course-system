@@ -11,12 +11,13 @@
         <result column="teacher_id" property="teacherId" />
         <result column="credit" property="credit" />
         <result column="course_time" property="courseTime" />
-        <result column="address" property="address" />
+        <result column="address_id" property="addressId" />
+        <result column="create_time" property="createTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, select_start, select_end, teacher_id, credit, course_time, address
+        id, name, select_start, select_end, teacher_id, credit, course_time, address_id, create_time
     </sql>
 
 </mapper>
