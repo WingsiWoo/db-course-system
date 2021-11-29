@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * <p>
@@ -127,8 +126,9 @@ public class CourseController {
 
     /**
      * 根据课程名称模糊查询
+     *
      * @param name 课程名称关键字，%name%查询
-     * @return CommonResult<Page<CoursePageBo>>
+     * @return CommonResult<Page < CoursePageBo>>
      */
     @GetMapping("/fuzzyCourseName")
     public CommonResult<Page<CoursePageBo>> fuzzyCourseName(@NotEmpty(message = "关键字不可为空") @RequestParam String name) {

@@ -61,23 +61,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Assert.notNull(course, "课程不存在");
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        List<StudentCourse> studentCourses = studentCourseMapper.selectByCourseId(courseId);
-        if (CollectionUtils.isNotEmpty(studentCourses)) {
-            List<Integer> studentIds = studentCourses.stream().map(StudentCourse::getStudentId).collect(Collectors.toList());
-            List<User> users = userMapper.selectBatchIds(studentIds);
-            Map<Integer, Float> gradeMap = studentCourses.stream().collect(Collectors.toMap(StudentCourse::getStudentId, studentCourse -> Objects.isNull(studentCourse.getGrade()) ? -1 : studentCourse.getGrade()));
-            List<StudentGradeExcelBo> excelBoList = users.stream().map(user -> {
-                StudentGradeExcelBo excelBo = new StudentGradeExcelBo();
-                excelBo.setAccount(user.getAccount());
-                excelBo.setName(user.getName());
-                float grade = gradeMap.get(user.getId());
-                excelBo.setGrade(grade == -1 ? null : grade);
-                return excelBo;
-            }).collect(Collectors.toList());
-            ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, excelBoList, 1, 0);
-        } else {
-            ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, new LinkedList<>(), 1, 0);
-        }
+        List<StudentGradeExcelBo> excelBoList = courseMapper.selectStudentGrade(courseId);
+        ExcelUtil.writeToExcel(course.getName() + "成绩.xlsx", byteArrayOutputStream, StudentGradeExcelBo.class, null, excelBoList, 1, 0);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentDispositionFormData("attachment", course.getName() + "成绩.xlsx");
@@ -276,7 +261,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     public Page<CoursePageBo> fuzzyCourseName(String name) {
         List<Course> courses = courseMapper.selectLikeByName(name);
         Page<CoursePageBo> page = new Page<>(1, 10);
-        if(CollectionUtils.isNotEmpty(courses)) {
+        if (CollectionUtils.isNotEmpty(courses)) {
             Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
                     .stream().collect(Collectors.toMap(User::getId, User::getName));
             Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
