@@ -168,8 +168,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     @Override
-    public Page<CoursePageBo> showCoursesInPage() {
-        List<Course> courses = courseMapper.selectList(null);
+    public Page<CoursePageBo> showCoursesInPage(String name) {
+        List<Course> courses;
+        if (StringUtils.isNotEmpty(name)) {
+            courses = courseMapper.selectLikeByName(name);
+        } else {
+            courses = courseMapper.selectList(null);
+        }
         Page<CoursePageBo> page = new Page<>(1, 10);
         if (CollectionUtils.isNotEmpty(courses)) {
             Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
@@ -188,21 +193,27 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     @Override
-    public Page<CoursePageBo> showSelectedCoursesInPage(Integer userId) {
+    public Page<CoursePageBo> showSelectedCoursesInPage(Integer userId, String name) {
         User user = userMapper.selectById(userId);
         Assert.notNull(user, "用户不存在");
         Integer roleId = userRoleMapper.selectByUserId(userId).getRoleId();
         Page<CoursePageBo> page = new Page<>(1, 10);
 
         if (RoleConstant.ROLE_STUDENT.equals(roleId)) {
-            List<StudentCourse> studentCourses = studentCourseMapper.selectByStudentId(userId);
-            if (CollectionUtils.isNotEmpty(studentCourses)) {
-                List<Course> courses = courseMapper.selectBatchIds(studentCourses.stream().map(StudentCourse::getCourseId).collect(Collectors.toList()));
+            List<Course> courses;
+            if (StringUtils.isNotEmpty(name)) {
+                courses = courseMapper.selectByStudentIdLikeName(userId, name);
+            } else {
+                List<StudentCourse> studentCourses = studentCourseMapper.selectByStudentId(userId);
+                courses = courseMapper.selectBatchIds(studentCourses.stream().map(StudentCourse::getCourseId).collect(Collectors.toList()));
+            }
+            List<CoursePageBo> pageBos;
+            if (CollectionUtils.isNotEmpty(courses)) {
                 Map<Integer, String> teacherMap = userMapper.selectBatchIds(courses.stream().map(Course::getTeacherId).collect(Collectors.toList()))
                         .stream().collect(Collectors.toMap(User::getId, User::getName));
                 Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
                         .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
-                List<CoursePageBo> pageBos = courses.stream().sorted(Comparator.comparing(Course::getCreateTime).reversed())
+                pageBos = courses.stream().sorted(Comparator.comparing(Course::getCreateTime).reversed())
                         .map(course -> {
                             Address address = addressMap.get(course.getAddressId());
                             return CoursePageBo.courseTransferToBo(course, teacherMap.get(course.getTeacherId()), address);
@@ -211,17 +222,24 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
                 page.setTotal(pageBos.size());
             }
         } else if (RoleConstant.ROLE_TEACHER.equals(roleId)) {
-            List<Course> courses = courseMapper.selectByTeacherId(userId);
+            List<Course> courses;
+            if (StringUtils.isNotEmpty(name)) {
+                courses = courseMapper.selectByTeacherIdLikeName(userId, name);
+            } else {
+                courses = courseMapper.selectByTeacherId(userId);
+            }
+
+            List<CoursePageBo> pageBos = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(courses)) {
                 Map<Integer, Address> addressMap = addressMapper.selectBatchIds(courses.stream().map(Course::getAddressId).collect(Collectors.toList()))
                         .stream().collect(Collectors.toMap(Address::getId, Function.identity()));
-                List<CoursePageBo> pageBos = courses.stream().map(course -> {
+                pageBos = courses.stream().map(course -> {
                     Address address = addressMap.get(course.getAddressId());
                     return CoursePageBo.courseTransferToBo(course, user.getName(), address);
                 }).collect(Collectors.toList());
-                page.setRecords(pageBos);
-                page.setTotal(pageBos.size());
             }
+            page.setRecords(pageBos);
+            page.setTotal(pageBos.size());
         }
         return page;
     }

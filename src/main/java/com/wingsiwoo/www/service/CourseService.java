@@ -60,17 +60,19 @@ public interface CourseService extends IService<Course> {
     /**
      * 分页查询所有课程
      *
+     * @param name 模糊查询关键字
      * @return Page<CoursePageBo>
      */
-    Page<CoursePageBo> showCoursesInPage();
+    Page<CoursePageBo> showCoursesInPage(String name);
 
     /**
      * 分页查询用户相关课程
      *
      * @param userId 用户id
+     * @param name 模糊查询关键字
      * @return Page<CoursePageBo>
      */
-    Page<CoursePageBo> showSelectedCoursesInPage(Integer userId);
+    Page<CoursePageBo> showSelectedCoursesInPage(Integer userId, String name);
 
     /**
      * 学生选课
@@ -95,5 +97,6 @@ public interface CourseService extends IService<Course> {
      * @param name 查询关键字
      * @return Page<CoursePageBo>
      */
+    @Deprecated
     Page<CoursePageBo> fuzzyCourseName(String name);
 }

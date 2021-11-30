@@ -89,8 +89,8 @@ public class CourseController {
      * @return CommonResult<Page < CoursePageBo>>
      */
     @GetMapping("/showCoursesInPage")
-    public CommonResult<Page<CoursePageBo>> showCoursesInPage() {
-        return CommonResult.operateSuccess(courseService.showCoursesInPage());
+    public CommonResult<Page<CoursePageBo>> showCoursesInPage(@RequestParam(required = false) String name) {
+        return CommonResult.operateSuccess(courseService.showCoursesInPage(name));
     }
 
     /**
@@ -99,8 +99,9 @@ public class CourseController {
      * @return CommonResult<Page < CoursePageBo>>
      */
     @PostMapping("/showSelectedCoursesInPage")
-    public CommonResult<Page<CoursePageBo>> showSelectedCoursesInPage(@NotNull(message = "用户id不可为空") @RequestParam("userId") Integer userId) {
-        return CommonResult.operateSuccess(courseService.showSelectedCoursesInPage(userId));
+    public CommonResult<Page<CoursePageBo>> showSelectedCoursesInPage(@NotNull(message = "用户id不可为空") @RequestParam("userId") Integer userId,
+                                                                      @RequestParam(required = false) String name) {
+        return CommonResult.operateSuccess(courseService.showSelectedCoursesInPage(userId, name));
     }
 
     /**
@@ -130,6 +131,7 @@ public class CourseController {
      * @param name 课程名称关键字，%name%查询
      * @return CommonResult<Page < CoursePageBo>>
      */
+    @Deprecated
     @GetMapping("/fuzzyCourseName")
     public CommonResult<Page<CoursePageBo>> fuzzyCourseName(@NotEmpty(message = "关键字不可为空") @RequestParam String name) {
         return CommonResult.operateSuccess(courseService.fuzzyCourseName(name));
