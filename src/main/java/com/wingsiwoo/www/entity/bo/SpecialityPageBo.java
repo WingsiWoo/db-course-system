@@ -18,6 +18,11 @@ public class SpecialityPageBo {
     private String introduction;
 
     /**
+     * 学院id
+     */
+    private Integer collegeId;
+
+    /**
      * 学院名称
      */
     private String collegeName;

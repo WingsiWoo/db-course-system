@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wingsiwoo.www.entity.bo.StudentGradeExcelBo;
 import com.wingsiwoo.www.entity.po.Course;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -60,4 +57,13 @@ public interface CourseMapper extends BaseMapper<Course> {
             @Result(column = "grade", property = "grade")
     })
     List<StudentGradeExcelBo> selectStudentGrade(Integer courseId);
+
+    @Select("SELECT c.id, name, select_start, select_end, teacher_id, credit, course_time, address_id, create_time " +
+            "FROM course c JOIN student_course sc ON sc.course_id = c.id " +
+            "WHERE sc.student_id = #{studentId} AND c.name LIKE CONCAT('%',#{name},'%')")
+    @Result(id = true, column = "course.id", property = "id")
+    List<Course> selectByStudentIdLikeName(@Param("studentId") Integer studentId, @Param("name") String name);
+
+    @Select("SELECT * FROM course WHERE teacher_id = #{teacherId} AND name LIKE CONCAT('%',#{name},'%')")
+    List<Course> selectByTeacherIdLikeName(@Param("teacherId") Integer teacherId, @Param("name") String name);
 }
