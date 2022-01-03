@@ -1,7 +1,9 @@
 package com.wingsiwoo.www.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wingsiwoo.www.auth.result.CommonResult;
+import com.wingsiwoo.www.entity.bo.ClazzNameBo;
 import com.wingsiwoo.www.service.ClazzService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * <p>
@@ -47,6 +50,22 @@ public class ClazzController {
     @GetMapping("/exportClazzTemplate")
     public ResponseEntity<byte[]> exportClazzTemplate() {
         return clazzService.exportClazzTemplate();
+    }
+
+
+    /**
+     * 获取所有班级名称
+     *
+     * @return CommonResult<List < ClazzNameBo>>
+     */
+    @GetMapping("/getAllClazzName")
+    public CommonResult<List<ClazzNameBo>> getAllClazzName() {
+        return CommonResult.operateSuccess(clazzService.getAllClazzName());
+    }
+
+    @GetMapping("/getAllClazzInPage")
+    public CommonResult<Page<ClazzNameBo>> getAllClazzInPage() {
+        return CommonResult.operateSuccess(clazzService.getAllClazzInPage());
     }
 }
 

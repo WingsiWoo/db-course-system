@@ -1,12 +1,12 @@
 package com.wingsiwoo.www.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wingsiwoo.www.dao.*;
+import com.wingsiwoo.www.entity.bo.ClazzBo;
+import com.wingsiwoo.www.entity.bo.ClazzNameBo;
 import com.wingsiwoo.www.entity.bo.UserExcelBo;
-import com.wingsiwoo.www.entity.po.Clazz;
-import com.wingsiwoo.www.entity.po.College;
-import com.wingsiwoo.www.entity.po.Speciality;
-import com.wingsiwoo.www.entity.po.User;
+import com.wingsiwoo.www.entity.po.*;
 import com.wingsiwoo.www.service.ClazzService;
 import com.wingsiwoo.www.service.UserService;
 import com.wingsiwoo.www.util.ExcelUtil;
@@ -25,10 +25,8 @@ import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +48,8 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
     @Resource
     private YearMapper yearMapper;
     @Resource
+    private ClazzMapper clazzMapper;
+    @Resource
     private UserService userService;
 
     @Override
@@ -63,7 +63,7 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
 
         List<User> users = userMapper.selectBatchByClazzId(clazzId);
         List<UserExcelBo> excelBoList = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(users)) {
+        if (CollectionUtils.isNotEmpty(users)) {
             excelBoList = UserExcelBo.transformToUserExcelBo(users);
         }
 
@@ -117,5 +117,46 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
         httpHeaders.setContentDispositionFormData("attachment", "班级学生信息模板.xlsx");
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.CREATED);
+    }
+
+    @Override
+    public List<ClazzNameBo> getAllClazzName() {
+        List<Clazz> clazzes = clazzMapper.selectList(null);
+        List<Speciality> specialities = specialityMapper.selectBatchIds(clazzes.stream().map(Clazz::getSpecId).collect(Collectors.toList()));
+        Map<Integer, Speciality> specMap = specialities.stream().collect(Collectors.toMap(Speciality::getId, Function.identity()));
+        Map<Integer, String> collegeMap = collegeMapper.selectBatchIds(specialities.stream().map(Speciality::getCollegeId).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(College::getId, College::getName));
+        Map<Integer, Integer> yearMap = yearMapper.selectBatchIds(clazzes.stream().map(Clazz::getYearId).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(Year::getId, Year::getGrade));
+        // 排序优先级：年级→学院→专业→班级序号
+        List<ClazzBo> clazzBoList = clazzes.stream().map(clazz -> {
+            ClazzBo clazzBo = new ClazzBo();
+            clazzBo.setId(clazz.getId());
+            clazzBo.setYearId(clazz.getYearId());
+            clazzBo.setCollegeId(specMap.get(clazz.getSpecId()).getCollegeId());
+            clazzBo.setSpecId(clazz.getSpecId());
+            clazzBo.setClazzIndex(clazz.getClazzIndex());
+            return clazzBo;
+        }).collect(Collectors.toList());
+        clazzBoList = clazzBoList.stream().sorted(Comparator.comparing(ClazzBo::getYearId)
+                .thenComparing(ClazzBo::getCollegeId).thenComparing(ClazzBo::getSpecId)
+                .thenComparing(ClazzBo::getClazzIndex)).collect(Collectors.toList());
+        return clazzBoList.stream().map(bo -> {
+            ClazzNameBo clazzNameBo = new ClazzNameBo();
+            clazzNameBo.setId(bo.getId());
+            String name = NameUtil.getClazzName(yearMap.get(bo.getYearId()), collegeMap.get(bo.getCollegeId()),
+                    specMap.get(bo.getSpecId()).getName(), bo.getClazzIndex());
+            clazzNameBo.setName(name);
+            return clazzNameBo;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ClazzNameBo> getAllClazzInPage() {
+        List<ClazzNameBo> clazzInfoList = getAllClazzName();
+        Page<ClazzNameBo> page = new Page<>(1, 10);
+        page.setRecords(clazzInfoList);
+        page.setTotal(clazzInfoList.size());
+        return page;
     }
 }
