@@ -55,6 +55,7 @@ public interface CourseService extends IService<Course> {
      * @param updateGradeBo updateGradeBo
      * @return 更新结果
      */
+    @Deprecated
     boolean updateStudentGrade(UpdateGradeBo updateGradeBo);
 
     /**
@@ -69,7 +70,7 @@ public interface CourseService extends IService<Course> {
      * 分页查询用户相关课程
      *
      * @param userId 用户id
-     * @param name 模糊查询关键字
+     * @param name   模糊查询关键字
      * @return Page<CoursePageBo>
      */
     Page<CoursePageBo> showSelectedCoursesInPage(Integer userId, String name);

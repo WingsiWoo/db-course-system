@@ -78,6 +78,7 @@ public class CourseController {
      * @param updateGradeBo updateGradeBo
      * @return 修改是否成功
      */
+    @Deprecated
     @PostMapping("/updateStudentGrade")
     public CommonResult<Void> updateStudentGrade(@Validated @RequestBody UpdateGradeBo updateGradeBo) {
         return CommonResult.autoResult(courseService.updateStudentGrade(updateGradeBo));

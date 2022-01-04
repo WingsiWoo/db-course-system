@@ -1,13 +1,17 @@
 package com.wingsiwoo.www.service;
 
-import com.wingsiwoo.www.entity.po.Clazz;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wingsiwoo.www.entity.bo.ClazzNameBo;
+import com.wingsiwoo.www.entity.po.Clazz;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author WingsiWoo
@@ -16,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ClazzService extends IService<Clazz> {
     /**
      * 导出班级学生信息
+     *
      * @param clazzId 班级id
      * @return 班级学生信息excel
      */
@@ -23,7 +28,8 @@ public interface ClazzService extends IService<Clazz> {
 
     /**
      * 导入班级学生信息
-     * @param file 学生信息文件
+     *
+     * @param file    学生信息文件
      * @param clazzId 班级id
      * @return 导入结果
      */
@@ -31,7 +37,20 @@ public interface ClazzService extends IService<Clazz> {
 
     /**
      * 导出班级学生信息模板
-     * @return ResponseEntity<byte[]>
+     *
+     * @return ResponseEntity<byte [ ]>
      */
     ResponseEntity<byte[]> exportClazzTemplate();
+
+    /**
+     * 获取所有班级名称
+     *
+     * @return 班级名称列表
+     */
+    List<ClazzNameBo> getAllClazzName();
+
+    /**
+     * 分页获取所有班级信息
+     */
+    Page<ClazzNameBo> getAllClazzInPage();
 }

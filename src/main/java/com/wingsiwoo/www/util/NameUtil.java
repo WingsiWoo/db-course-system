@@ -15,7 +15,7 @@ public class NameUtil {
      * @return xx级xx学院xx专业(x)班
      */
     public static String getClazzName(Integer grade, String collegeName, String specName, Integer index) {
-        return grade + collegeName + specName + "专业(" + index + ")";
+        return grade + collegeName + specName + "专业(" + index + ")班";
     }
 
     /**
